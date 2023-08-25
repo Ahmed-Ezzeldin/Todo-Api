@@ -3,48 +3,26 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 
-const LoggerTest = require("./logger");
-const Logger = require("./logger");
-const dbConnection = require("./database");
+const Logger = require("./config/logger");
+const dbConnection = require("./config/database");
+const todoRoute = require("./routes/todo_route");
 
 dotenv.config({ path: "config.env" });
 const app = express();
 
 dbConnection();
-
 app.use(express.json());
 
 if (process.env.APP_ENV == "Development") {
   app.use(morgan("dev"));
-  Logger.debug(`Evironments: ${process.env.APP_ENV}`, "blue");
-  Logger.debug(`Datebase: ${process.env.DB_URI}`, "blue");
+  Logger.debug(`*** App Name: ${process.env.APP_NAME}`, "blue");
+  Logger.debug(`*** Evironments: ${process.env.APP_ENV}`, "blue");
 }
 
-const todoSchema = new mongoose.Schema({
-  name: String,
-});
-const TodoModel = new mongoose.model("Todo", todoSchema);
-
-app.post("/", (req, res) => {
-  const name = req.body.name;
-  Logger.debug(req.body.name);
-  Logger.debug(name);
-  const newTodo = new TodoModel({ name: name });
-  newTodo
-    .save()
-    .then((doc) => {
-      res.json(doc);
-    })
-    .catch((err) => {
-      res.json(err);
-    });
-});
-
-app.get("/", (req, res) => {
-  res.send("Todo App API");
-});
+// Routes
+app.use("/api/v1/todos", todoRoute);
 
 const port = process.env.PORT;
 app.listen(port, () => {
-  console.log(`App running on port: ${port}`);
+  Logger.log(`App running on port: ${port}`);
 });
