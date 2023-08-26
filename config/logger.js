@@ -35,7 +35,7 @@ class Logger {
     Logger.log("================================================= ❗Error❗\n");
   }
 
-  static logObject(object) {
+  static object(object) {
     Logger.log("═════════════════════════════════════════════════════════╗");
     Logger.log(object);
     Logger.log("═════════════════════════════════════════════════════════╝");
