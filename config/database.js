@@ -3,7 +3,10 @@ const Logger = require("./logger");
 
 const dbConnection = () => {
   mongoose
-    .connect(process.env.DB_URI)
+    .connect(process.env.DB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
     .then((conn) => {
       Logger.debug(`Database Connected: ${conn.connection.host}`);
     })

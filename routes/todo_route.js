@@ -1,8 +1,9 @@
 const express = require("express");
-const { getTodos } = require("../services/todo_service");
+const { getAllTodos, createTodo } = require("../services/todo_service");
+const { createTodoValidator } = require("../validators/todo_validator");
 
 const router = express.Router();
 
-router.get("/", getTodos);
+router.route("/").get(getAllTodos).post(createTodoValidator, createTodo);
 
 module.exports = router;

@@ -1,15 +1,24 @@
 const Logger = require("../config/logger");
 const TodoModel = require("../models/todo_model");
 
-exports.getTodos = (req, res) => {
-  const name = req.body.name;
-  const newTodo = new TodoModel({ name: name });
-  newTodo
-    .save()
-    .then((doc) => {
-      res.json(doc);
-    })
-    .catch((err) => {
-      res.json(err);
+exports.createTodo = async (req, res) => {
+  try {
+    const todo = await TodoModel.create({
+      title: req.body.title,
+      content: req.body.content,
+      isDone: req.body.isDone,
     });
+    res.status(200).json({ data: todo });
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
+};
+
+exports.getAllTodos = async (req, res) => {
+  try {
+    const todos = await TodoModel.find({});
+    res.status(200).json({ data: todos });
+  } catch (error) {
+    res.status(400).json({ error: error });
+  }
 };
