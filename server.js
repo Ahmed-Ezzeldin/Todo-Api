@@ -22,6 +22,16 @@ if (process.env.APP_ENV == "Development") {
 // Routes
 app.use("/api/v1/todos", todoRoute);
 
+app.all("*", (req, res, next) => {
+  const err = new Error(`Can't find this route: ${req.originalUrl}`);
+  next(err.message);
+});
+
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  res.status(500).json({ error: err, test: "test" });
+});
+
 const port = process.env.PORT;
 app.listen(port, () => {
   Logger.log(`App running on port: ${port}`);

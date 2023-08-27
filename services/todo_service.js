@@ -40,8 +40,9 @@ exports.getTodo = async (req, res) => {
     const todo = await TodoModel.findById(id);
     if (!todo) {
       res.status(404).json({ msg: `No todo for this id ${id}` });
+    } else {
+      res.status(200).json({ data: todo });
     }
-    res.status(200).json({ data: todo });
   } catch (error) {
     res.status(400).json({ error: error });
   }
