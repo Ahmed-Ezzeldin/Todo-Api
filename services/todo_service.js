@@ -1,4 +1,5 @@
 const TodoModel = require("../models/todo_model");
+const ApiError = require("../utils/api_error");
 
 // @desc ------> Get All Todo
 // @route -----> GET api/v1/todos
@@ -34,12 +35,12 @@ exports.createTodo = async (req, res) => {
 // @desc ------> Get Todo By id
 // @route -----> GET api/v1/todos/:id
 // @access ----> Public
-exports.getTodo = async (req, res) => {
+exports.getTodo = async (req, res, next) => {
   try {
     const id = req.params.id;
     const todo = await TodoModel.findById(id);
     if (!todo) {
-      res.status(404).json({ msg: `No todo for this id ${id}` });
+      return next(new ApiError(`No todo for this id ${id}`, 404));
     } else {
       res.status(200).json({ data: todo });
     }
@@ -47,10 +48,11 @@ exports.getTodo = async (req, res) => {
     res.status(400).json({ error: error });
   }
 };
+
 // @desc ------> Update Todo By id
 // @route -----> PUT api/v1/todos/:id
 // @access ----> Private
-exports.updateTodo = async (req, res) => {
+exports.updateTodo = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { title } = req.body;
@@ -62,7 +64,7 @@ exports.updateTodo = async (req, res) => {
       { new: true }
     );
     if (!todo) {
-      res.status(404).json({ msg: `No todo for this id ${id}` });
+      return next(new ApiError(`No todo for this id ${id}`, 404));
     }
     res.status(200).json({ data: todo });
   } catch (error) {
@@ -73,12 +75,12 @@ exports.updateTodo = async (req, res) => {
 // @desc ------> Delete Todo By id
 // @route -----> DELETE api/v1/todos/:id
 // @access ----> Private
-exports.deleteTodo = async (req, res) => {
+exports.deleteTodo = async (req, res, next) => {
   try {
     const { id } = req.params;
     const todo = await TodoModel.findByIdAndDelete(id);
     if (!todo) {
-      res.status(404).json({ msg: `No todo for this id ${id}` });
+      return next(new ApiError(`No todo for this id ${id}`, 404));
     }
     res.status(200).json({ data: "Item deleted successfully" });
   } catch (error) {

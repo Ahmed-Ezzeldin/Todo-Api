@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const Logger = require("./config/logger");
 const dbConnection = require("./config/database");
 const todoRoute = require("./routes/todo_route");
+const ApiError = require("./utils/api_error");
+const globalError = require("./middlewares/error_middleware");
 
 dotenv.config({ path: "config.env" });
 const app = express();
@@ -23,14 +25,11 @@ if (process.env.APP_ENV == "Development") {
 app.use("/api/v1/todos", todoRoute);
 
 app.all("*", (req, res, next) => {
-  const err = new Error(`Can't find this route: ${req.originalUrl}`);
-  next(err.message);
+  next(new ApiError(`Can't find this route: ${req.originalUrl}`, 400));
 });
 
 // Global error handling middleware
-app.use((err, req, res, next) => {
-  res.status(500).json({ error: err, test: "test" });
-});
+app.use(globalError);
 
 const port = process.env.PORT;
 app.listen(port, () => {
